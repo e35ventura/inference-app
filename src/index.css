@@ -6,14 +6,16 @@
   html {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale; /* Added for Firefox */
   }
 
   /* Chat messages use system font like iMessage */
   .chat-message {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro", "SF Pro Text", system-ui, sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
 
-  /* Custom scrollbar for webkit browsers */
+  /* Custom scrollbar styles for different browsers */
+  /* Webkit (Chrome, Safari, newer versions of Edge) */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -31,8 +33,15 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #c7c7cc;
   }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #d1d1d6 transparent;
+  }
 }
 
+/* Ensure animations work across browsers */
 @keyframes pulse {
   0% {
     opacity: 1;
@@ -45,15 +54,19 @@
   }
 }
 
-/* Message bubble animations */
+/* Message bubble animations with cross-browser transforms */
 @keyframes messageIn {
   from {
     opacity: 0;
     transform: translateY(8px);
+    -webkit-transform: translateY(8px);
+    -moz-transform: translateY(8px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
   }
 }
 
@@ -71,26 +84,46 @@
 @keyframes messageBarSlideDown {
   from {
     transform: translateY(-20px);
+    -webkit-transform: translateY(-20px);
+    -moz-transform: translateY(-20px);
     opacity: 0;
   }
   to {
     transform: translateY(0);
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
     opacity: 1;
   }
 }
 
+/* Add will-change to optimize animations */
 .message-animation {
+  will-change: transform, opacity;
   animation: messageIn 0.2s ease-out forwards;
 }
 
 .chat-box-animation {
+  will-change: max-height, opacity;
   animation: chatBoxExpand 0.5s ease-out forwards;
 }
 
 .message-bar-slide-down {
+  will-change: transform, opacity;
   animation: messageBarSlideDown 0.5s ease-out forwards;
 }
 
 .model-indicator {
+  will-change: opacity;
   animation: pulse 2s ease-in-out infinite;
+}
+
+/* Add flex-basis for better flex behavior in Firefox */
+.chat-message {
+  flex-basis: auto;
+  min-width: 0;
+}
+
+/* Ensure proper text rendering in Firefox */
+.prose {
+  text-rendering: optimizeLegibility;
 }
